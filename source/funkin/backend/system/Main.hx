@@ -159,6 +159,23 @@ class Main extends Sprite
 		initTransition();
 	}
 
+	public static function refreshAssets() @:privateAccess {
+        FunkinCache.instance.clearSecondLayer();
+
+        var game = FlxG.game;
+        var daSndTray = Type.createInstance(game._customSoundTray = funkin.menus.ui.FunkinSoundTray, []);
+        var index:Int = game.numChildren - 1;
+
+        if(game.soundTray != null) {
+            var newIndex:Int = game.getChildIndex(game.soundTray);
+            if(newIndex != -1) index = newIndex;
+            game.removeChild(game.soundTray);
+            game.soundTray.__cleanup();
+        }
+
+        game.addChildAt(game.soundTray = daSndTray, index);
+	}
+
 	public static function initTransition() {
 		var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
 		diamond.persist = true;
