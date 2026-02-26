@@ -30,6 +30,8 @@ jobs:
           key: cache-build-android
           path: |
             .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
 
       - run: echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
