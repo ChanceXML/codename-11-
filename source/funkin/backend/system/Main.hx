@@ -25,15 +25,12 @@ import sys.FileSystem;
 import sys.io.File;
 
 #if android
-import android.Manifest
-import lime.system.System;
 import funkin.mobile.utils.MobileUtil;
 #end
 
 class Main extends Sprite
 {
 	public static var instance:Main;
-	public static var externalRoot:String;
 
 	public static var modToLoad:String = null;
 	public static var forceGPUOnlyBitmapsOff:Bool = #if desktop false #else true #end;
@@ -42,9 +39,7 @@ class Main extends Sprite
 
 	public static var scaleMode:FunkinRatioScaleMode;
 
-	#if desktop
 	public static var framerateSprite:Framerate;
-	#end
 
 	var gameWidth:Int = 1280;
 	var gameHeight:Int = 720;
@@ -65,39 +60,20 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
 		instance = this;
+
 		CrashHandler.init();
-		initStorage();
+
 		addChild(game = new FunkinGame(gameWidth, gameHeight, MainState, Options.framerate, Options.framerate, skipSplash, startFullscreen));
-		#if desktop
+
 		addChild(framerateSprite = new Framerate());
 		SystemInfo.init();
-		#end
 	}
 
-	function initStorage()
-	{
-		#if android
-		if (Build.VERSION.SDK_INT < 33)
-		{
-			System.requestPermissions([
-				Manifest.permission.READ_EXTERNAL_STORAGE,
-				Manifest.permission.WRITE_EXTERNAL_STORAGE
-			]);
-		}
-
-		externalRoot = "/storage/emulated/0/.CodenameEngine-v1.0.1/";
-
-		if (!FileSystem.exists(externalRoot))
-			FileSystem.createDirectory(externalRoot);
-		#else
-		externalRoot = ".CodenameEngine-v1.0.1/";
-		if (!FileSystem.exists(externalRoot))
-			FileSystem.createDirectory(externalRoot);
-		#end
-	}
-
+	@:dox(hide)
 	public static var audioDisconnected:Bool = false;
+
 	public static var changeID:Int = 0;
 
 	public static var pathBack = #if (windows || linux)
@@ -157,6 +133,7 @@ class Main extends Sprite
 		Options.load();
 
 		FlxG.fixedTimestep = false;
+
 		FlxG.scaleMode = scaleMode = new FunkinRatioScaleMode();
 
 		Conductor.init();
@@ -211,6 +188,7 @@ class Main extends Sprite
 	}
 
 	private static function onStateSwitchPost() {
+
 		@:privateAccess {
 			for(length=>pool in openfl.display3D.utils.UInt8Buff._pools) {
 				for(b in pool.clear())
@@ -218,6 +196,7 @@ class Main extends Sprite
 			}
 			openfl.display3D.utils.UInt8Buff._pools.clear();
 		}
+
 		MemoryUtil.clearMajor();
 	}
 
