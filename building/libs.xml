@@ -23,6 +23,7 @@
 		<!-- <lib name="dox" /> -->
 		<lib name="markdown" />
 		<lib name="hxcpp-debug-server" />
+		<lib name="format" />
 
 		<lib name="nape-haxe4" />
 
