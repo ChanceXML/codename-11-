@@ -30,26 +30,10 @@
 		<lib global="true" name="hxp" /> <lib name="hxp" />
 		<lib global="true" name="format" /> <lib name="format" />
 
-		<git name="hxcpp" url="https://github.com/CodenameCrew/cne-hxcpp" />
+		<git name="hxcpp" url="https://github.com/ChanceXML/cne-hxcpp" />
 
 		<git name="flixel-animate" url="https://github.com/MaybeMaru/flixel-animate/" skipDeps="true"/>
+		
+		<git name="extension-androidtools" url="https://github.com/LimeExtensions/extension-androidtools" />
 	</if>
-
-	<!-- Hxcpp Building -->
-	<if cond="build-hxcpp || all">
-		<print pretty="true">Rebuilding Hxcpp...</print>
-
-		<!-- Build hxcpp -->
-		<cmd inLib="hxcpp" dir="tools/hxcpp" cmd="haxe compile.hxml" />
-	</if>
-
-	<!-- Lime Building -->
-	<!-- <if cond="build-lime || all">
-		<print pretty="true">Rebuilding Lime...</print>
-
-		<!- - Build lime - ->
-		<cmd inLib="lime" cmd="haxelib run lime rebuild . $PLATFORM -release -clean" />
-		<cmd inLib="lime" dir="tools" cmd="haxe tools.hxml" />
-	</if> -->
-
 </libraries>
