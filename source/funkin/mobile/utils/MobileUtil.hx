@@ -1,218 +1,157 @@
-package funkin.backend.system;
-
-import flixel.FlxG;
-import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.TransitionData;
-import flixel.graphics.FlxGraphic;
-import flixel.math.FlxPoint;
-import flixel.math.FlxRect;
-import flixel.system.ui.FlxSoundTray;
-import funkin.backend.assets.AssetSource;
-import funkin.backend.assets.AssetsLibraryList;
-import funkin.backend.assets.ModsFolder;
-import funkin.backend.system.framerate.Framerate;
-import funkin.backend.system.framerate.SystemInfo;
-import funkin.backend.system.modules.*;
-import funkin.backend.utils.ThreadUtil;
-import funkin.editors.SaveWarning;
-import funkin.options.PlayerSettings;
-import openfl.Assets;
-import openfl.Lib;
-import openfl.display.Sprite;
-import openfl.utils.AssetLibrary;
-import sys.FileSystem;
-import sys.io.File;
+package funkin.mobile.utils;
 
 #if android
-import funkin.mobile.utils.MobileUtil;
+import extension.androidtools.os.Build.VERSION;
+import extension.androidtools.os.Environment;
+import extension.androidtools.Permissions;
+import extension.androidtools.Settings;
 #end
 
-class Main extends Sprite
-{
-	public static var instance:Main;
+import lime.system.System;
+import openfl.Assets;
+import haxe.io.Bytes;
 
-	public static var modToLoad:String = null;
-	public static var forceGPUOnlyBitmapsOff:Bool = #if desktop false #else true #end;
-	public static var noTerminalColor:Bool = false;
-	public static var verbose:Bool = false;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
-	public static var scaleMode:FunkinRatioScaleMode;
+using StringTools;
 
-	public static var framerateSprite:Framerate;
+class MobileUtil {
 
-	var gameWidth:Int = 1280;
-	var gameHeight:Int = 720;
-	var skipSplash:Bool = true;
-	var startFullscreen:Bool = false;
+    public static var currentDirectory:String = null;
 
-	public static var game:FunkinGame;
+    public static function getDirectory():String {
+        #if android
+        var preferredPath = "/storage/emulated/0/.CodenameEngine-v1.0.1/";
 
-	public static var timeSinceFocus(get, never):Float;
-	public static var time:Int = 0;
+        try {
+            if (!FileSystem.exists(preferredPath)) {
+                FileSystem.createDirectory(preferredPath);
+            }
+        } catch (e:Dynamic) {
+            trace("Failed to create external directory: " + e);
+        }
 
-	public static function preInit() {
-		funkin.backend.utils.NativeAPI.registerAsDPICompatible();
-		funkin.backend.system.CommandLineHandler.parseCommandLine(Sys.args());
-		funkin.backend.system.Main.fixWorkingDirectory();
-	}
+        return preferredPath;
+        #elseif ios
+        return System.documentsDirectory;
+        #else
+        return "";
+        #end
+    }
 
-	public function new()
-	{
-		super();
+    public static function getPermissions():Void {
+        #if android
+        try {
+            if (VERSION.SDK_INT >= 30) {
+                if (!Environment.isExternalStorageManager()) {
+                    Settings.requestSetting('MANAGE_APP_ALL_FILES_ACCESS_PERMISSION');
+                }
+            } else {
+                Permissions.requestPermissions([
+                    'READ_EXTERNAL_STORAGE',
+                    'WRITE_EXTERNAL_STORAGE'
+                ]);
+            }
+        } catch (e:Dynamic) {
+            trace('Permission request error: $e');
+        }
+        #end
+    }
 
-		instance = this;
+    public static function copyAssetsFromAPK(sourcePath:String = "assets/", targetPath:String = null):Void {
+        #if mobile
+        if (targetPath == null)
+            targetPath = getDirectory() + "assets/";
 
-		CrashHandler.init();
+        if (!FileSystem.exists(targetPath))
+            FileSystem.createDirectory(targetPath);
 
-		addChild(game = new FunkinGame(gameWidth, gameHeight, MainState, Options.framerate, Options.framerate, skipSplash, startFullscreen));
+        copyAssetsRecursively(sourcePath, targetPath);
+        #end
+    }
 
-		addChild(framerateSprite = new Framerate());
-		SystemInfo.init();
-	}
+    public static function copyModsFromAPK(sourcePath:String = "mods/", targetPath:String = null):Void {
+        #if mobile
+        if (targetPath == null)
+            targetPath = getDirectory() + "mods/";
 
-	@:dox(hide)
-	public static var audioDisconnected:Bool = false;
+        if (!FileSystem.exists(targetPath))
+            FileSystem.createDirectory(targetPath);
 
-	public static var changeID:Int = 0;
+        copyAssetsRecursively(sourcePath, targetPath);
+        #end
+    }
 
-	public static var pathBack = #if (windows || linux)
-			"../../../../"
-		#elseif mac
-			"../../../../../../../"
-		#else
-			"../../../../"
-		#end;
+    private static function copyAssetsRecursively(sourcePath:String, targetPath:String):Void {
+        #if mobile
+        try {
+            var cleanSourcePath = sourcePath;
 
-	public static var startedFromSource:Bool = #if TEST_BUILD true #else false #end;
+            if (cleanSourcePath.endsWith("/"))
+                cleanSourcePath = cleanSourcePath.substr(0, cleanSourcePath.length - 1);
 
-	@:dox(hide) public static function execAsync(func:Void->Void) ThreadUtil.execAsync(func);
+            var assetList:Array<String> = Assets.list();
 
-	private static function getTimer():Int {
-		return time = Lib.getTimer();
-	}
+            for (assetPath in assetList) {
 
-	public static function loadGameSettings() {
+                if (assetPath.startsWith(cleanSourcePath)) {
 
-		#if android
-		MobileUtil.getPermissions();
-		MobileUtil.copyAssetsFromAPK();
-		MobileUtil.copyModsFromAPK();
-		#end
+                    var relativePath = assetPath.substr(cleanSourcePath.length);
 
-		WindowUtils.init();
-		SaveWarning.init();
-		MemoryUtil.init();
+                    if (relativePath.startsWith("/"))
+                        relativePath = relativePath.substr(1);
 
-		@:privateAccess
-		FlxG.game.getTimer = getTimer;
+                    if (relativePath == "")
+                        continue;
 
-		FunkinCache.init();
-		Paths.assetsTree = new AssetsLibraryList();
+                    var fullTargetPath = targetPath + relativePath;
+                    var targetDir = haxe.io.Path.directory(fullTargetPath);
 
-		#if UPDATE_CHECKING
-		funkin.backend.system.updating.UpdateUtil.init();
-		#end
+                    if (targetDir != "" && !FileSystem.exists(targetDir))
+                        createDirectoryRecursive(targetDir);
 
-		ShaderResizeFix.init();
-		Logs.init();
-		Paths.init();
+                    try {
+                        if (Assets.exists(assetPath)) {
+                            var bytes:Bytes = Assets.getBytes(assetPath);
+                            if (bytes != null)
+                                File.saveBytes(fullTargetPath, bytes);
+                        }
+                    } catch (e:Dynamic) {
+                        trace('Error copying $assetPath: $e');
+                    }
+                }
+            }
+        } catch (e:Dynamic) {
+            trace('Recursive copy error: $e');
+        }
+        #end
+    }
 
-		hscript.Interp.importRedirects = funkin.backend.scripting.Script.getDefaultImportRedirects();
+    private static function createDirectoryRecursive(path:String):Void {
+        #if mobile
+        if (FileSystem.exists(path))
+            return;
 
-		#if GLOBAL_SCRIPT
-		funkin.backend.scripting.GlobalScript.init();
-		#end
+        var parts = path.split("/");
+        var current = "";
 
-		var lib = new AssetLibrary();
-		@:privateAccess
-		lib.__proxy = Paths.assetsTree;
-		Assets.registerLibrary('default', lib);
+        for (part in parts) {
+            if (part == "")
+                continue;
 
-		PlayerSettings.init();
-		Options.load();
+            current += "/" + part;
 
-		FlxG.fixedTimestep = false;
-
-		FlxG.scaleMode = scaleMode = new FunkinRatioScaleMode();
-
-		Conductor.init();
-		AudioSwitchFix.init();
-		EventManager.init();
-
-		FlxG.signals.focusGained.add(onFocus);
-		FlxG.signals.preStateSwitch.add(onStateSwitch);
-		FlxG.signals.postStateSwitch.add(onStateSwitchPost);
-		FlxG.signals.postUpdate.add(onUpdate);
-
-		FlxG.mouse.useSystemCursor = true;
-
-		ModsFolder.init();
-
-		#if MOD_SUPPORT
-		if (FileSystem.exists("mods/autoload.txt"))
-			modToLoad = File.getContent("mods/autoload.txt").trim();
-
-		ModsFolder.switchMod(modToLoad.getDefault(Options.lastLoadedMod));
-		#end
-
-		initTransition();
-	}
-
-	public static function initTransition() {
-		var diamond:FlxGraphic = FlxGraphic.fromClass(GraphicTransTileDiamond);
-		diamond.persist = true;
-		diamond.destroyOnNoUse = false;
-
-		FlxTransitionableState.defaultTransIn = new TransitionData(FADE, 0xFF000000, 1, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
-			new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-
-		FlxTransitionableState.defaultTransOut = new TransitionData(FADE, 0xFF000000, 0.7, new FlxPoint(0, 1),
-			{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
-	}
-
-	public static function onFocus() {
-		_tickFocused = FlxG.game.ticks;
-	}
-
-	private static function onStateSwitch() {
-		scaleMode.resetSize();
-	}
-
-	public static function onUpdate() {
-		if (PlayerSettings.solo.controls.DEV_CONSOLE)
-			NativeAPI.allocConsole();
-
-		if (PlayerSettings.solo.controls.FPS_COUNTER)
-			Framerate.debugMode = (Framerate.debugMode + 1) % 3;
-	}
-
-	private static function onStateSwitchPost() {
-
-		@:privateAccess {
-			for(length=>pool in openfl.display3D.utils.UInt8Buff._pools) {
-				for(b in pool.clear())
-					b.destroy();
-			}
-			openfl.display3D.utils.UInt8Buff._pools.clear();
-		}
-
-		MemoryUtil.clearMajor();
-	}
-
-	public static var noCwdFix:Bool = false;
-
-	public static function fixWorkingDirectory() {
-		#if windows
-		if (!noCwdFix && !sys.FileSystem.exists('manifest/default.json')) {
-			Sys.setCwd(haxe.io.Path.directory(Sys.programPath()));
-		}
-		#end
-	}
-
-	private static var _tickFocused:Float = 0;
-
-	public static function get_timeSinceFocus():Float {
-		return (FlxG.game.ticks - _tickFocused) / 1000;
-	}
+            if (!FileSystem.exists(current)) {
+                try {
+                    FileSystem.createDirectory(current);
+                } catch (e:Dynamic) {
+                    trace('Directory creation error: $e');
+                }
+            }
+        }
+        #end
+    }
 }
