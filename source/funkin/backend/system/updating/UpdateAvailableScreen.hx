@@ -7,8 +7,6 @@ import funkin.backend.system.updating.UpdateUtil.UpdateCheckCallback;
 import funkin.backend.utils.MarkdownUtil;
 import funkin.menus.MainMenuState;
 
-// android doesnt need this
-#if !android
 class UpdateAvailableScreen extends MusicBeatState {
 	public var bg:FlxSprite;
 
@@ -162,4 +160,3 @@ class UpdateAvailableScreen extends MusicBeatState {
 		oldPos.put();
 	}
 }
-#end
