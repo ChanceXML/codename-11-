@@ -26,6 +26,7 @@ import sys.io.File;
 #if android
 import android.content.Context;
 import android.os.Build;
+import funkin.mobile.utils.MobileUtil;
 #end
 
 class Main extends Sprite
@@ -73,10 +74,9 @@ class Main extends Sprite
 
 		addChild(game = new FunkinGame(gameWidth, gameHeight, MainState, Options.framerate, Options.framerate, skipSplash, startFullscreen));
 
-		#if (!mobile && !web)
+		// fps. which were disabled for android for some reason
 		addChild(framerateSprite = new Framerate());
 		SystemInfo.init();
-		#end
 	}
 
 	@:dox(hide)
@@ -100,6 +100,13 @@ class Main extends Sprite
 	}
 
 	public static function loadGameSettings() {
+        // Android Permissions
+		#if android
+        MobileUtil.getPermissions();
+        MobileUtil.copyAssetsFromAPK();
+        MobileUtil.copyModsFromAPK();
+        #end
+			
 		WindowUtils.init();
 		SaveWarning.init();
 		MemoryUtil.init();
