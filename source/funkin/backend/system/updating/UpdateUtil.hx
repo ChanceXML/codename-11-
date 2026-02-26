@@ -19,6 +19,8 @@ import sys.thread.Mutex;
 
 using funkin.backend.system.github.GitHub;
 
+// android doesnt need this
+#if !android
 class UpdateUtil {
 	public static var lastUpdateCheck:Null<UpdateCheckCallback>;
 
@@ -157,3 +159,4 @@ typedef UpdateCheckCallback = {
 
 	@:optional var date:Date;
 }
+#end
