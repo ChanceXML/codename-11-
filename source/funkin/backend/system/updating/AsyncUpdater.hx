@@ -13,6 +13,8 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 
+// android doesnt need this
+#if !android
 class AsyncUpdater {
 	// NON ASYNC STUFF
 	#if REGION
@@ -189,3 +191,4 @@ enum abstract UpdaterStep(Int) {
 	var DOWNLOADING_EXECUTABLE = 2;
 	var INSTALLING = 3;
 }
+#end
