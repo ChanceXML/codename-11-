@@ -8,8 +8,6 @@ import funkin.backend.shaders.CustomShader;
 import funkin.backend.system.updating.UpdateUtil.UpdateCheckCallback;
 import funkin.menus.TitleState;
 
-// android doesnt need this
-#if !android
 class UpdateScreen extends MusicBeatState {
 	public var updater:AsyncUpdater;
 
@@ -138,4 +136,3 @@ class UpdateScreen extends MusicBeatState {
 		}
 	}
 }
-#end
