@@ -26,7 +26,6 @@ import sys.io.File;
 
 #if android
 import android.Manifest
-import android.os.Build;
 import lime.system.System;
 import funkin.mobile.utils.MobileUtil;
 #end
