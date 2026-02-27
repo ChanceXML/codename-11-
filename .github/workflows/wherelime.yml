@@ -1,0 +1,34 @@
+name: Scan for Lime AssetLibrary Modifications
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Scan for lime AssetLibrary references
+        run: |
+          echo "🔎 Scanning for lime.utils.AssetLibrary..."
+          grep -RIn --color=always "lime.utils.AssetLibrary" . || echo "No matches found."
+
+          echo ""
+          echo "🔎 Scanning for buildLimeAssetLibrary..."
+          grep -RIn --color=always "buildLimeAssetLibrary" . || echo "No matches found."
+
+          echo ""
+          echo "🔎 Scanning for Compiler.addMetadata..."
+          grep -RIn --color=always "Compiler.addMetadata" . || echo "No matches found."
+
+          echo ""
+          echo "🔎 Scanning for @:build macros..."
+          grep -RIn --color=always "@:build" . || echo "No matches found."
+
+          echo ""
+          echo "✅ Scan complete."
