@@ -110,7 +110,7 @@ jobs:
       - name: Download Older Version Of Flixel Addons. and also lime
         run: |
          haxelib git flixel-addons https://github.com/CodenameCrew/cne-flixel-addons.git f540d575bd78438996d18168290d981538fea510
-         haxelib git lime https://github.com/CodenameCrew/cne-lime
+         haxelib set lime 8.1.2
         
         
       - name: Build Android
