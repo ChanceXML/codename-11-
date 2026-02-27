@@ -66,11 +66,22 @@ class Macros {
 	}
 
 	public static function buildLimeAssetLibrary():Array<Field> {
-		final fields:Array<Field> = Context.getBuildFields(), pos:Position = Context.currentPos();
+    final fields:Array<Field> = Context.getBuildFields();
+    final pos:Position = Context.currentPos();
+		
+    for (f in fields) {
+        if (f.name == "tag") {
+            return fields;
+        }
+    }
 
-		fields.push({name: 'tag', access: [APublic], pos: pos, kind: FVar(macro :funkin.backend.assets.AssetSource)});
+    fields.push({
+        name: "tag",
+        access: [APublic],
+        pos: pos,
+        kind: FVar(macro : funkin.backend.assets.AssetSource)
+    });
 
-		return fields;
+    return fields;
 	}
-}
 #end
