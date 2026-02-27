@@ -91,10 +91,18 @@ jobs:
           cd "$HAXELIB_PATH/tools/hxcpp"
           haxe compile.hxml
 
-      - name: Increase Gradle memory
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+         gradle-version: 7.4.2
+
+      - name: Configure Gradle memory
         run: |
          mkdir -p android
-         echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8" > android/gradle.properties
+         echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1536m -Dfile.encoding=UTF-8" > android/gradle.properties
+         echo "org.gradle.daemon=true" >> android/gradle.properties
+         echo "org.gradle.parallel=true" >> android/gradle.properties
+         echo "org.gradle.configureondemand=true" >> android/gradle.properties
          
       - name: Build Android
         run: |
