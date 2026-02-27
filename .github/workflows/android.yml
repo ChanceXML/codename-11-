@@ -108,7 +108,7 @@ jobs:
         run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
 
       - name: Set Flixel
-        run: haxelib set flixel git
+        run: haxelib set flixel 5.3.0
 
       - name: Build Android
         run: haxelib run lime build android -final
