@@ -91,6 +91,9 @@ jobs:
           cd "$HAXELIB_PATH/tools/hxcpp"
           haxe compile.hxml
 
+      - name: Increase Gradle memory
+        run: echo "org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g" >> android/gradle.properties
+
       - name: Build Android
         run: |
           haxelib run lime build android -final
