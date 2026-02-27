@@ -107,6 +107,9 @@ jobs:
       - name: Limit Java heap globally
         run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
 
+      - name: Set Flixel
+        run: haxelib set flixel git
+
       - name: Build Android
         run: haxelib run lime build android -final
 
