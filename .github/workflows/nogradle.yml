@@ -1,0 +1,123 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system packages
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-17-jdk wget unzip neko
+
+      - name: Install Haxe 4.3.7
+        run: |
+          wget https://github.com/HaxeFoundation/haxe/releases/download/4.3.7/haxe-4.3.7-linux64.tar.gz
+          tar -xzf haxe-4.3.7-linux64.tar.gz
+          mv haxe_* haxe
+          sudo mv haxe /usr/local/
+          echo "/usr/local/haxe" >> $GITHUB_PATH
+
+      - name: Restore existing build cache for faster compilation
+        uses: actions/cache@v4.2.3
+        with:
+          key: cache-build-android
+          path: |
+            .haxelib/
+            export/release/android/haxe/
+            export/release/android/obj/
+
+      - run: echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
+
+      - name: Run Codename Setup
+        run: |
+          haxe -cp commandline -D analyzer-optimize --run Main setup -s --no-vscheck
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK + NDK r25
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" \
+                     "platforms;android-33" \
+                     "build-tools;33.0.2" \
+                     "ndk;25.2.9519653"
+
+      - name: Set Android Environment
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+          echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Lock OpenFL + Lime Versions
+        run: |
+          haxelib install lime 8.1.2
+          haxelib set lime 8.1.2
+          haxelib set openfl git
+          haxelib install hxvlc 1.9.3
+          haxelib set hxvlc 1.9.3
+
+      - name: Force Clean hxcpp
+        run: |
+          haxelib set hxcpp git
+          haxelib remove hxcpp 4.3.2 || true
+
+      - name: Lime Setup Android
+        run: |
+          printf "%s\n%s\n%s\n" \
+          "$ANDROID_SDK_ROOT" \
+          "$ANDROID_NDK_ROOT" \
+          "$JAVA_HOME" \
+          | haxelib run lime setup android
+
+      - name: Show Installed Libraries
+        run: haxelib list
+
+      - name: Clear hxcpp cache
+        run: rm -rf ~/.hxcpp
+
+      - name: Rebuild hxcpp tool
+        run: |
+          HAXELIB_PATH=$(haxelib path hxcpp | head -n 1)
+          cd "$HAXELIB_PATH/tools/hxcpp"
+          haxe compile.hxml
+
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.4.2
+
+      - name: Configure Gradle (5GB Safe Mode)
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xmx5g -XX:MaxMetaspaceSize=1536m -Dfile.encoding=UTF-8" > ~/.gradle/gradle.properties
+          echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+          echo "org.gradle.parallel=false" >> ~/.gradle/gradle.properties
+          echo "org.gradle.configureondemand=false" >> ~/.gradle/gradle.properties
+          echo "android.splits.abi.enable=false" >> ~/.gradle/gradle.properties
+
+      - name: Limit Java heap globally
+        run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
+
+      - name: Set Flixel
+        run: haxelib set flixel git
+
+      - name: Build Android
+        run: haxelib run lime build android -final
+
+      - name: Find APK
+        run: find . -name "*.apk"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-Build
+          path: export/release/android/bin/app/build/outputs/apk/debug/*.apk
