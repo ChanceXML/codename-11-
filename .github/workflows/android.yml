@@ -103,6 +103,11 @@ jobs:
          echo "org.gradle.daemon=true" >> android/gradle.properties
          echo "org.gradle.parallel=true" >> android/gradle.properties
          echo "org.gradle.configureondemand=true" >> android/gradle.properties
+
+      - name: Disable ABI splits
+        run: |
+         mkdir -p android
+         echo "android.splits.abi.enable=false" >> android/gradle.properties
          
       - name: Build Android
         run: |
