@@ -24,8 +24,8 @@ jobs:
           sudo mv haxe /usr/local/
           echo "/usr/local/haxe" >> $GITHUB_PATH
 
-      - name: Restore existing build cache for faster compilation
-        uses: actions/cache@v4.2.3
+      - name: Restore build cache
+        uses: actions/cache@v4
         with:
           key: cache-build-android
           path: |
@@ -78,12 +78,8 @@ jobs:
           "$JAVA_HOME" \
           | haxelib run lime setup android
 
-      - name: Show Installed Libraries
-        run: haxelib list
-
       - name: Clear hxcpp cache
-        run: |
-          rm -rf ~/.hxcpp
+        run: rm -rf ~/.hxcpp
 
       - name: Rebuild hxcpp tool
         run: |
@@ -94,21 +90,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
         with:
-         gradle-version: 7.4.2
+          gradle-version: 7.4.2
 
-      - name: Configure Gradle memory
+      - name: Configure Gradle (5GB Safe Mode)
         run: |
-         mkdir -p android
-         echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1536m -Dfile.encoding=UTF-8" > android/gradle.properties
-         echo "org.gradle.daemon=true" >> android/gradle.properties
-         echo "org.gradle.parallel=true" >> android/gradle.properties
-         echo "org.gradle.configureondemand=true" >> android/gradle.properties
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xmx5g -XX:MaxMetaspaceSize=1536m -Dfile.encoding=UTF-8" > ~/.gradle/gradle.properties
+          echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+          echo "org.gradle.parallel=false" >> ~/.gradle/gradle.properties
+          echo "org.gradle.configureondemand=false" >> ~/.gradle/gradle.properties
+          echo "android.splits.abi.enable=false" >> ~/.gradle/gradle.properties
 
-      - name: Disable ABI splits
-        run: |
-         mkdir -p android
-         echo "android.splits.abi.enable=false" >> android/gradle.properties
-         
+      - name: Limit Java heap globally
+        run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
+
       - name: Build Android
         run: |
           haxelib run lime build android -final
