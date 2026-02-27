@@ -84,5 +84,5 @@ class Macros {
 
     return fields;
 	}
+  }
 #end
-}
