@@ -119,6 +119,9 @@ jobs:
          haxelib install openfl 9.3.3
          haxelib set openfl 9.3.3
 
+      - name: Set Flixel Addons
+        run: haxelib set flixel-addons 3.1.0
+
       - name: Build Android
         run: haxelib run lime build android -final -verbose
 
