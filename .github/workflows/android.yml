@@ -118,6 +118,7 @@ jobs:
          haxelib set openfl git
          haxelib set hxcpp git
          haxelib install lime 8.1.2
+         haxelib set lime 8.1.2
 
       - name: haxelib
         run: haxelib list
