@@ -120,7 +120,7 @@ jobs:
          haxelib set openfl 9.3.3
 
       - name: Set Flixel Addons
-        run: haxelib git https://github.com/CodenameCrew/cne-flixel-addons.git f540d575bd78438996d18168290d981538fea510
+        run: haxelib install flixel-addons 3.0.2
 
       - name: Build Android
         run: haxelib run lime build android -final -verbose
