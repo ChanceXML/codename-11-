@@ -79,7 +79,11 @@ jobs:
           | haxelib run lime setup android
 
       - name: lime
-        run: haxelib git lime https://github.com/CodenameCrew/cne-lime
+        run: |
+         haxelib set lime git
+         haxelib set flixel-addons git
+         haxelib set flixel git
+         haxelib set hxcpp git
 
       - name: Show Installed Libraries
         run: haxelib list
