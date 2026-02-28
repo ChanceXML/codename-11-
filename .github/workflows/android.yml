@@ -77,10 +77,10 @@ jobs:
 
       - name: set old versions 
         run: |
-         haxelib git lime https://github.com/CodenameCrew 5b1d4d6de0baa868809a59188071da07519fe05c
          haxelib git openfl https://github.com/CodenameCrew/cne-openfl a5f70cbdf8bb579739364a089867741962bc6098
          haxelib git flixel-addons https://github.com/CodenameCrew/cne-flixel-addons f540d575bd78438996d18168290d981538fea510
          haxelib git hxcpp https://github.com/CodenameCrew/cne-hxcpp 767fe94d19a041147c4f65dea02c89cb206a0758
+         haxelib git flixel https://github.com/CodenameCrew/cne-flixel c5a1b3f4d8d0cacdfe93edce2a897270debfc0cc
               
       - name: Show Installed Libraries
         run: haxelib list
@@ -110,9 +110,6 @@ jobs:
 
       - name: Limit Java heap globally
         run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
-
-      - name: Set Flixel Addons
-        run: haxelib install flixel-addons 3.0.2
 
       - name: Build Android
         run: haxelib run lime build android -final -verbose
