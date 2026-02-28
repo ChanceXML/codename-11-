@@ -98,6 +98,9 @@ jobs:
 
       - name: Download Older Version Of Flixel Addons
         run: haxelib git flixel-addons https://github.com/CodenameCrew/cne-flixel-addons.git f540d575bd78438996d18168290d981538fea510
+
+      - name: Set Flixel 
+        run: haxelib set flixel git
         
       - name: Build Android
         run: haxelib run lime build android -final
