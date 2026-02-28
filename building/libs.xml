@@ -10,7 +10,6 @@
 
 		<!-- Flixel -->
 		<git name="flixel" url="https://github.com/CodenameCrew/cne-flixel" ref="5b1d4d6de0baa868809a59188071da07519fe05c" />
-        <lib name="flixel-addons" version="4.0.0" />
 		<git name="flixel-addons" url="https://github.com/CodenameCrew/cne-flixel-addons" />
 
 		<!-- Other Libraries -->
