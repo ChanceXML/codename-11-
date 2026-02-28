@@ -78,6 +78,9 @@ jobs:
           "$JAVA_HOME" \
           | haxelib run lime setup android
 
+      - name: lime
+        run: haxelib git lime https://github.com/CodenameCrew/cne-lime
+
       - name: Show Installed Libraries
         run: haxelib list
 
