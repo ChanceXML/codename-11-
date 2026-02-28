@@ -104,7 +104,7 @@ jobs:
         run: haxelib set flixel git
         
       - name: Build Android
-        run: haxelib run lime build android -final
+        run: haxelib run lime build android -final -verbose
 
       - name: Find APK
         run: find . -name "*.apk"
