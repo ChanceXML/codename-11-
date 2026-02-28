@@ -7,7 +7,7 @@
 		<str id="game.accuracy">Accuracy:{0} - {1}</str>
 		<str id="game.combo">Combo:{0}</str>
 
-		<str id="game.rating.[N/A]">[N/A]</str>
+		<str id="game.rating."></str>
 		<str id="game.rating.F">F</str>
 		<str id="game.rating.E">E</str>
 		<str id="game.rating.D">D</str>
@@ -100,5 +100,17 @@
 		<str id="diff.hard">Hard</str>
 		<str id="diff.erect">Erect</str>
 		<str id="diff.nightmare">Nightmare</str>
+	</group>
+
+	<group name="Editors">
+		<str id="stageEditor.topBar.file">File</str>
+		<str id="stageEditor.topBar.edit">Edit</str>
+		<str id="stageEditor.topBar.select">Select</str>
+		<str id="stageEditor.topBar.view">View</str>
+		<str id="stageEditor.topBar.editor">Editor</str>
+		<str id="stageSprites.win-title">Stage Sprites</str>
+		<str id="stageElement.scale">Scale</str>
+		<str id="stageElement.scroll">Scroll</str>
+		<str id="stageElement.unknown">Unknown Element</str>
 	</group>
 </language>
