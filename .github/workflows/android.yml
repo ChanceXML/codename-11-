@@ -97,7 +97,7 @@ jobs:
         run: echo "JAVA_TOOL_OPTIONS=-Xmx5g" >> $GITHUB_ENV
 
       - name: Download Older Version Of Flixel Addons
-        run: haxelib git flixel-addons https://github.com/CodenameCrew/cne-flixel-addons.git f540d575bd78438996d18168290d981538fea510
+        run: haxelib git flixel-addons https://github.com/CodenameCrew/cne-flixel-addons.git 5279c743824d4775eb7c916e266e6e682678c4e5
 
       - name: Set Flixel 
         run: haxelib set flixel git
