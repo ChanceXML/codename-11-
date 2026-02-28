@@ -84,6 +84,7 @@ jobs:
          haxelib set flixel-addons git
          haxelib set flixel git
          haxelib set hxcpp git
+         haxelib set openfl git
 
       - name: Show Installed Libraries
         run: haxelib list
