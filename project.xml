@@ -31,27 +31,73 @@
 	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
 
 	<!-- Engine Settings -->
+	<!-- Comment this out to disable updates !-->
+	<define name="UPDATE_CHECKING" unless="web || hl || neko || debug"/>
+
+	<!-- Comment this out to disable Discord RPC !-->
 	<section if="cpp">
 		<define name="DISCORD_RPC" if="desktop"/>
 	</section>
 
-	<define name="MODCHARTING_FEATURES" />
+	<!-- Uncomment this to achive faster compile times, will strip extraneous and commonly unused features. -->
+	<!-- <define name="STRIPPED_COMPILE" unless="debug"/> -->
+
+	<!-- Comment this out to disable modcharting features -->
+	<define name="MODCHARTING_FEATURES" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to disable GitHub API integration !-->
 	<define name="GITHUB_API" unless="web || hl"/>
-	<define name="COMPILE_ALL_CLASSES" />
-	<define name="CUSTOM_CLASSES" />
+
+	<!-- Comment this out to prevent unused classes from being compiled.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="COMPILE_ALL_CLASSES" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to prevent extending classes in hscript.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="CUSTOM_CLASSES" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to disable abstract support in hscript. !-->
+	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to disable multithreading !-->
 	<haxedef name="ALLOW_MULTITHREADING" unless="web || flash" />
+
+	<!-- Comment this out to disable mods folder !-->
 	<haxedef name="MOD_SUPPORT" unless="web"/>
+
+	<!-- Comment this out to disable translations folders !-->
+	<haxedef name="TRANSLATIONS_SUPPORT"/>
+
+	<!-- Comment this out to disable global scripts !-->
 	<haxedef name="GLOBAL_SCRIPT" />
+
+	<!-- Comment this out to disable softcoded states and state scripting !-->
 	<haxedef name="SOFTCODED_STATES" />
+
+	<!-- Comment this out to disable support for custom ndlls. !-->
 	<haxedef name="NDLLS_SUPPORTED" unless="web || iphonesim || hl" />
+
+	<!-- Comment this out to use the default OpenFL assets system for the assets/ folder. !-->
 	<define name="USE_ADAPTED_ASSETS" unless="web" />
-	<define name="THREE_D_SUPPORT" /> 
-	<define name="NAPE_ENABLED" />
+
+	<!-- Comment this out to disable support for Away3D Flixel Integration (reduces compile times) !-->
+	<define name="THREE_D_SUPPORT" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to disable support for Nape integration (flixel.addons.nape) (reduces compile times) !-->
+	<define name="NAPE_ENABLED" unless="STRIPPED_COMPILE" />
+
+	<!-- Comment this out to disable video cutscene support, in case of compilation errors. !-->
 	<section if="cpp">
 		<define name="VIDEO_CUTSCENES" if="desktop || android" />
 	</section>
+
+	<!-- Comment this out to disable commit number on FPS -->
 	<define name="SHOW_BUILD_ON_FPS" />
+
+	<!-- Comment this out to disable dark mode windows -->
 	<define name="DARK_MODE_WINDOW"/>
+
+	<!-- Disable a optimization, to allow reflection to use more functions -->
 	<define name="FLX_NO_GENERIC" />
 
 	<!-- Libraries -->
