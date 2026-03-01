@@ -26,6 +26,7 @@ import sys.io.File;
 
 #if android
 import funkin.mobile.utils.MobileUtil;
+import utils.DebugLogger;
 #end
 
 class Main extends Sprite
@@ -60,6 +61,10 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
+		#if android
+        DebugLogger.init();
+        #end
 
 		instance = this;
 
