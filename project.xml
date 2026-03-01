@@ -87,7 +87,12 @@
 
 <source name="source"/>
 
-<!-- Keep FULL folder structure intact -->
+<define name="PRELOAD_ALL" unless="web" />
+<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
+
+<library name="assets" preload="true"  if="PRELOAD_ALL"/>
+<library name="assets" preload="false" if="NO_PRELOAD_ALL"/>
+
 <assets path="assets/" rename="assets"/>
 <assets path="mods" rename="mods" embed="false"/>
 
