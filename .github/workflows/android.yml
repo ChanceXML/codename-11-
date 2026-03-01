@@ -28,11 +28,9 @@ jobs:
       - name: Restore existing build cache for faster compilation
         uses: actions/cache@v4.2.3
         with:
-          key: cache-build-android
+          key: cache-build-android-${{ github.sha }}
           path: |
             .haxelib/
-            export/release/android/haxe/
-            export/release/android/obj/
             
       - run: echo "HXCPP_COMPILE_CACHE=$HOME/.hxcpp" >> $GITHUB_ENV
 
