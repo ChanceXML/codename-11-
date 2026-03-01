@@ -39,7 +39,6 @@
 	<define name="GITHUB_API" unless="web || hl"/>
 	<define name="COMPILE_ALL_CLASSES" />
 	<define name="CUSTOM_CLASSES" />
-	<haxedef name="HSCRIPT_ABSTRACT_SUPPORT" />
 	<haxedef name="ALLOW_MULTITHREADING" unless="web || flash" />
 	<haxedef name="MOD_SUPPORT" unless="web"/>
 	<haxedef name="GLOBAL_SCRIPT" />
