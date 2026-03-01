@@ -1,4 +1,4 @@
-package utils;
+package funkin.mobile;
 
 import sys.io.File;
 import sys.FileSystem;
