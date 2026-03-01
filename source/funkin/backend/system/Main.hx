@@ -26,7 +26,7 @@ import sys.io.File;
 
 #if android
 import funkin.mobile.utils.MobileUtil;
-import utils.DebugLogger;
+import funkin.mobile.DebugLogger;
 #end
 
 class Main extends Sprite
