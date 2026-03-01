@@ -111,12 +111,4 @@
 		<android target-sdk-version="34"/>
 		<android min-sdk-version="21"/>
 	</section>
-
-	<!-- HXCPP -->
-	<setenv name="HAXEPATH" value="./"/>
-	<haxedef name="HXCPP_CHECK_POINTER"/>
-	<haxedef name="HXCPP_STACK_LINE"/>
-	<haxedef name="HXCPP_DEBUG_LINK"/>
-	<haxedef name="HXCPP_CATCH_SEGV"/>
-
 </project>
