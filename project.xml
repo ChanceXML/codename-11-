@@ -46,11 +46,13 @@
 	<haxedef name="SOFTCODED_STATES" />
 	<haxedef name="NDLLS_SUPPORTED" unless="web || iphonesim || hl" />
 	<define name="USE_ADAPTED_ASSETS" unless="web" />
-	<define name="THREE_D_SUPPORT" />
+	<!-- disabled for now 
+	<define name="THREE_D_SUPPORT" /> -->
 	<define name="NAPE_ENABLED" />
+	<!-- disabled for now 
 	<section if="cpp">
 		<define name="VIDEO_CUTSCENES" if="desktop || android" />
-	</section>
+	</section> -->
 	<define name="SHOW_BUILD_ON_FPS" />
 	<define name="DARK_MODE_WINDOW"/>
 	<define name="FLX_NO_GENERIC" />
